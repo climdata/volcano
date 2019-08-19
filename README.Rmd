@@ -60,8 +60,10 @@ write.table(volcanonew, file = "csv/monthly_volcano.csv", append = FALSE, quote 
 ```{r plot, echo=TRUE}
 require("ggplot2")
 volcano <- read.csv("./csv/monthly_volcano.csv", sep=",")
+volcano1500 <- subset(volcano, volcano$year > 1499)
 mp <- ggplot() +
-      geom_line(aes(y=volcano$vei, x=volcano$time), color="blue") +
+      #geom_line(aes(y=volcano1500$vei, x=volcano1500$time), color="blue") +
+      geom_segment(aes(y=volcano1500$vei, yend=0, x=volcano1500$time, xend=volcano1500$time), color="blue") +
       xlab("Year") + ylab("VEI []")
 mp
 ```

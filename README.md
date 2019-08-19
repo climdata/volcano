@@ -28,7 +28,7 @@ curl 'https://www.ngdc.noaa.gov/nndc/struts/results?ge_23=&le_23=&type_15=Like&q
 ```
 ##   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
 ##                                  Dload  Upload   Total   Spent    Left  Speed
-##   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 40920    0 40920    0     0  22903      0 --:--:--  0:00:01 --:--:-- 22898100 69666    0 69666    0     0  38958      0 --:--:--  0:00:01 --:--:-- 38941
+##   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 69666    0 69666    0     0  36027      0 --:--:--  0:00:01 --:--:-- 36021
 ```
 
 
@@ -74,8 +74,10 @@ require("ggplot2")
 
 ```r
 volcano <- read.csv("./csv/monthly_volcano.csv", sep=",")
+volcano1500 <- subset(volcano, volcano$year > 1499)
 mp <- ggplot() +
-      geom_line(aes(y=volcano$vei, x=volcano$time), color="blue") +
+      #geom_line(aes(y=volcano1500$vei, x=volcano1500$time), color="blue") +
+      geom_segment(aes(y=volcano1500$vei, yend=0, x=volcano1500$time, xend=volcano1500$time), color="blue") +
       xlab("Year") + ylab("VEI []")
 mp
 ```
