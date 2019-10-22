@@ -28,7 +28,7 @@ curl 'https://www.ngdc.noaa.gov/nndc/struts/results?ge_23=&le_23=&type_15=Like&q
 ```
 ##   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
 ##                                  Dload  Upload   Total   Spent    Left  Speed
-##   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 69666    0 69666    0     0  36027      0 --:--:--  0:00:01 --:--:-- 36021
+##   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 69900    0 69900    0     0  69900      0 --:--:--  0:00:01 --:--:-- 57436
 ```
 
 
@@ -44,14 +44,17 @@ names(volcano)[names(volcano) == "Latitude"] <- "latitude"
 names(volcano)[names(volcano) == "Longitude"] <- "longitude"
 names(volcano)[names(volcano) == "Name"] <- "name"
 names(volcano)[names(volcano) == "DEATHS"] <- "deaths"
-volcano$Time <- NULL
+volcano$time <- NULL
+volcano$ts <- NULL
 volcano1 <- subset(volcano, !is.na(volcano$month))
 volcano2 <- subset(volcano, is.na(volcano$month))
-volcano1$time <- signif(volcano1$year + (volcano1$month-0.5)/12, digits=6)
-volcano2$time <- signif(volcano2$year + 0.5, digits=6)
+volcano1$ts <- signif(volcano1$year + (volcano1$month-0.5)/12, digits=6)
+volcano2$ts <- signif(volcano2$year + 0.5, digits=6)
+volcano1$time <- paste(volcano1$year,volcano1$month, '15 00:00:00', sep='-')
+volcano2$time <- paste(volcano2$year,'07-01 00:00:00', sep='-')
 volcano <- rbind(volcano1, volcano2)
-volcano <- volcano[order(volcano$time),]
-volcanonew <-volcano[,c("year","month","time","vei","latitude","longitude", "deaths")]
+volcano <- volcano[order(volcano$ts),]
+volcanonew <-volcano[,c("year","month","time","ts","vei","latitude","longitude", "deaths")]
 
 write.table(volcanonew, file = "csv/monthly_volcano.csv", append = FALSE, quote = TRUE, sep = ",",
             eol = "\n", na = "NA", dec = ".", row.names = FALSE,
@@ -72,12 +75,16 @@ require("ggplot2")
 ## Loading required package: ggplot2
 ```
 
+```
+## Warning: package 'ggplot2' was built under R version 3.5.3
+```
+
 ```r
 volcano <- read.csv("./csv/monthly_volcano.csv", sep=",")
 volcano1500 <- subset(volcano, volcano$year > 1499)
 mp <- ggplot() +
       #geom_line(aes(y=volcano1500$vei, x=volcano1500$time), color="blue") +
-      geom_segment(aes(y=volcano1500$vei, yend=0, x=volcano1500$time, xend=volcano1500$time), color="blue") +
+      geom_segment(aes(y=volcano1500$vei, yend=0, x=volcano1500$ts, xend=volcano1500$ts), color="blue") +
       xlab("Year") + ylab("VEI []")
 mp
 ```
